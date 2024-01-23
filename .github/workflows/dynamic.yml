@@ -1,27 +1,53 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # Setup matrix
-  setup-matrix:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.setup-matrix.outputs.matrix }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - id: setup-matrix
-        uses: druzsan/setup-matrix@v1
-        with:
-          matrix: |
-            os: ubuntu-latest windows-latest macos-latest,
-            python-version: 3.8 3.9 3.10
-  # Setup python and print version
-  setup-python:
-    needs: setup-matrix
-    strategy:
-      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '${{ matrix.python-version }}'
-      - run: python --version
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+          name: Dynamic Values Workflow
+     steps:
+       - name: Set Dynamic Variables
+        id: set_vars
+        run: |
+          # Use a script or command to generate dynamic values
+          DYNAMIC_VALUE=$(echo "DynamicValue-$(date '+%Y%m%d%H%M%S')")
+          echo "DYNAMIC_VALUE=${DYNAMIC_VALUE}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Show Dynamic Values
+        run: |
+          # Access the dynamic values using the GitHub Actions context
+          echo "Dynamic Value: ${{ env.DYNAMIC_VALUE }}"
 jobs:
   # Setup matrix
   setup-matrix:
